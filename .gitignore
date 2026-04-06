@@ -1,0 +1,8 @@
+.env
+шпоргалка.md
+alembic.ini
+.vscode
+.idea
+.gigaide
+__pycache__/
+alembic
