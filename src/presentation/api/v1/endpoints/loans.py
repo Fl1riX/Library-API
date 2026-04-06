@@ -8,7 +8,7 @@ from src.domain.services.exceptions import NotFoundException, ConflictException
 from src.presentation.api.v1.exceptions import HTTPNotFound, HTTPConflict, HTTPBadRequest
 from src.shared.schemas.loans_schema import GetLoan, CreateLoan
 
-router = APIRouter(prefix="loans", tags=["Выдачи"])
+router = APIRouter(prefix="/loans", tags=["Выдачи"])
 
 @router.get("/{loan_id}", response_model=GetLoan)
 async def get_loan(

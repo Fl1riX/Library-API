@@ -4,7 +4,7 @@ from datetime import datetime
 
 from src.infrastructure.db.database import get_db
 from src.domain.services.readers_service import ReadersService
-from src.presentation.api.v1.exceptions import HTTPNotFound, HTTPConflict, HTTPBadRequest
+from src.presentation.api.v1.exceptions import HTTPNotFound, HTTPBadRequest
 from src.shared.schemas.readers_schema import CreateReader, GetReader
 from src.domain.services.exceptions import NotFoundException
 
@@ -25,7 +25,7 @@ async def get_reader(
 
 @router.get("/")
 async def get_readers(
-    db: AsyncSession
+    db: AsyncSession = Depends(get_db)
 ):
     readers = await ReadersService.get_all_readers(db)
     if not readers:
