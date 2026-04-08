@@ -10,6 +10,25 @@ from src.domain.services.exceptions import NotFoundException
 
 router = APIRouter(prefix="/readers", tags=["Читатели"])
 
+@router.get("/search")
+async def search_user(
+    db: AsyncSession = Depends(get_db),
+    full_name: str | None = Query(None, description="ФИО пользователя"),
+    email: str | None = Query(None, description="email пользователя"),
+    phone: str | None = Query(None, description="Телефонный номер пользователя"),
+    registration_date: datetime | None = Query(None, description="Дата регистрации"),
+    skip: int = Query(10, ge=0),
+    limit: int = Query(20, ge=1, le=100)
+):
+    try:
+        readers, total = await ReadersService.search_reader(
+            db, full_name, email,phone, registration_date, skip, limit
+        )
+    except NotFoundException:
+        raise HTTPNotFound("Readers was not found")
+    
+    return readers, total
+
 @router.get("/{reader_id}", response_model=GetReader)
 async def get_reader(
     reader_id: int,
@@ -31,25 +50,6 @@ async def get_readers(
     if not readers:
         raise HTTPNotFound
     return readers
-
-@router.get("/search")
-async def search_user(
-    db: AsyncSession = Depends(get_db),
-    full_name: str | None = Query(None, description="ФИО пользователя"),
-    email: str | None = Query(None, description="email пользователя"),
-    phone: str | None = Query(None, description="Телефонный номер пользователя"),
-    registration_date: datetime | None = Query(None, description="Дата регистрации"),
-    skip: int = Query(10, ge=0),
-    limit: int = Query(20, ge=1, le=100)
-):
-    try:
-        readers, total = await ReadersService.search_reader(
-            db, full_name, email,phone, registration_date, skip, limit
-        )
-    except NotFoundException:
-        raise HTTPNotFound("Readers was not found")
-    
-    return readers, total
 
 @router.delete("/{reader_id}")
 async def delete_reader(

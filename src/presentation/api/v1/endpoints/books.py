@@ -11,6 +11,28 @@ from src.domain.services.exceptions import NotFoundException
 
 router = APIRouter(prefix="/books", tags=["Книги"])
 
+@router.get("/search")
+async def search_book(
+    title: str | None = Query(None, description="Название книги"),
+    author: str | None = Query(None, description="Автор"),
+    isbn: str | None = Query(None, description="isbn"),
+    year: datetime | None = Query(None, description="Год издания"),
+    pages: int | None = Query(None, description="Количество страниц"),
+    avalible: bool | None = Query(None, description="Наличие книги"),
+    skip: int = Query(0, ge=0),
+    limit: int = Query(20, ge=1, le=100),
+    db: AsyncSession = Depends(get_db)
+):
+    
+    try:
+        books, total = await BooksService.search_book(
+            db, title, author, isbn, year, pages, avalible, skip, limit
+        )
+    except NotFoundException:
+        raise HTTPNotFound("Books not found")
+    
+    return books, total
+
 @router.get("/{book_isbn}", response_model=GetBook)
 async def get_book(
     book_isbn: str, 
@@ -71,24 +93,3 @@ async def update_book(
     else:
         raise HTTPBadRequest
 
-@router.get("/search")
-async def search_book(
-    title: str | None = Query(None, description="Название книги"),
-    author: str | None = Query(None, description="Автор"),
-    isbn: str | None = Query(None, description="isbn"),
-    year: datetime | None = Query(None, description="Год издания"),
-    pages: int | None = Query(None, description="Количество страниц"),
-    avalible: bool | None = Query(None, description="Наличие книги"),
-    skip: int = Query(0, ge=0),
-    limit: int = Query(20, ge=1, le=100),
-    db: AsyncSession = Depends(get_db)
-):
-    
-    try:
-        books, total = await BooksService.search_book(
-            db, title, author, isbn, year, pages, avalible, skip, limit
-        )
-    except NotFoundException:
-        raise HTTPNotFound("Books not found")
-    
-    return books, total
