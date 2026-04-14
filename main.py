@@ -9,7 +9,7 @@ app = FastAPI(
     version="0.0.1",
     description="Библиотечная система"
 )
-app.include_router(api_router)
+app.include_router(api_router, prefix="/api/v1")
 
 app.add_middleware(
     CORSMiddleware,

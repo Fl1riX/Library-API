@@ -8,12 +8,20 @@ from .jwt_service import hash_password
 
 class AuthService:
     
+    @staticmethod
+    async def find_user_by_id(user_id: int, db: AsyncSession):
+        result = await db.execute(select(Readers).where(
+            Readers.id == user_id
+        ))
+        user = result.scalars().first()
+        return user
+    
     @classmethod
-    async def find_user_by_login(cls, email: str, phone: str, db: AsyncSession) -> Readers | None:
+    async def find_user_by_login(cls, login: str, db: AsyncSession) -> Readers | None:
         result = await db.execute(select(Readers).where(
             or_(
-                Readers.email == email,
-                Readers.phone == phone
+                Readers.email == login,
+                Readers.phone == login
             )
         ))
         reader = result.scalars().first()
@@ -23,8 +31,10 @@ class AuthService:
     
     @classmethod
     async def create_user(cls, new_user: CreateReader, db: AsyncSession):
-        exists = await cls.find_user_by_login(new_user.email, new_user.phone, db)
-        if exists is not None:
+        exists_email = await cls.find_user_by_login(new_user.email, db)
+        exists_phone = await cls.find_user_by_login(new_user.phone, db)
+        
+        if exists_email is not None and exists_phone is not None:
             raise ConflictException
         
         new_password = hash_password(new_user.password)

@@ -6,3 +6,6 @@ alembic.ini
 .gigaide
 __pycache__/
 alembic
+.venv/
+.pytest_cache/
+*.db

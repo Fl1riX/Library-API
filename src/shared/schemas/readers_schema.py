@@ -9,6 +9,12 @@ class CreateReader(BaseModel):
     
     model_config = ConfigDict(extra='forbid')
 
+class LoginReader(BaseModel):
+    login: str = Field(max_length=50, min_length=5)
+    password: str = Field(max_length=255, min_length=8)
+    
+    model_config = ConfigDict(extra='forbid')
+
 class GetReader(CreateReader):
     id: int
     registration_date: datetime
@@ -17,7 +23,6 @@ class GetReader(CreateReader):
         from_attributes = True
         
 class ChangePassword(BaseModel):
-    login: str = Field(max_length=150)
     password: str = Field(max_length=120)
     new_password: str = Field(max_length=120)
     

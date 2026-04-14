@@ -4,7 +4,7 @@ from datetime import datetime, timezone, timedelta
 
 from src.config import get_algorithm, get_secret_key
 
-pwd_context = CryptContext(schemes=["Argon2"], deprecated="auto")
+pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
 def hash_password(password: str) -> str:
     """Создание хэша пароля"""

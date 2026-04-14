@@ -20,7 +20,7 @@ class Books(Base):
     title: Mapped[str] = mapped_column(String(200), nullable=False, index=True)
     author: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
     isbn: Mapped[str] = mapped_column(String(13), unique=True, nullable=False, index=True)
-    year: Mapped[datetime] = mapped_column(Integer) 
+    year: Mapped[int] = mapped_column(Integer) 
     pages: Mapped[int] = mapped_column(Integer) 
     avalible: Mapped[bool] = mapped_column(Boolean)
 
